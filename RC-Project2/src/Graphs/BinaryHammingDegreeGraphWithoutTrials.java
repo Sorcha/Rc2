@@ -6,10 +6,10 @@ import org.graphstream.algorithm.generator.BaseGenerator;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 
-import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.ArrayList;
+import java.util.List;
 
-public class BinaryHammingGraph extends BaseGenerator
+public class BinaryHammingDegreeGraphWithoutTrials extends BaseGenerator
 {
     private String sequence;
 
@@ -23,12 +23,10 @@ public class BinaryHammingGraph extends BaseGenerator
 
     private int maxNumberOfSequences;
 
-    private int maxTrials;
-
-    public BinaryHammingGraph(String sequence,
-                              int hammingDistanceThreshold,
-                              double p,
-                              int maxTrials)
+    public BinaryHammingDegreeGraphWithoutTrials(
+            String sequence,
+            int hammingDistanceThreshold,
+            double p)
     {
         this.p = p;
         this.setUseInternalGraph(true);
@@ -37,7 +35,6 @@ public class BinaryHammingGraph extends BaseGenerator
         this.hd = new HammingDistance();
         this.maxNumberOfSequences = (int)Math.pow(2,sequence.length());
         currentIteration = 0;
-        this.maxTrials = maxTrials;
     }
 
 
@@ -71,7 +68,7 @@ public class BinaryHammingGraph extends BaseGenerator
         }else
         {
             return true;
-         }
+        }
 
         createNewEdgeIfHammingDistance(node);
 
@@ -84,80 +81,36 @@ public class BinaryHammingGraph extends BaseGenerator
     {
         String mutationSequence = mutationNode.getId();
 
-        List<Node> trialNodes = GetCandidates(this.internalGraph, maxTrials, mutationNode);
+        List<Node> nodes = GetCandidates(this.internalGraph);
 
-        for (Node node : trialNodes)
+        for (Node node : nodes)
         {
             String nodeSequence = node.getId();
 
             if (hd.compare(mutationSequence, nodeSequence) <= hammingDistanceThreshold)
             {
-                try {
-                    this.addEdge(this.edgeId(nodeSequence, mutationSequence), mutationSequence, nodeSequence);
-                }catch (Exception e)
-                {
-                    e.getMessage();
-                }
+                this.addEdge(this.edgeId(nodeSequence, mutationSequence), mutationSequence, nodeSequence);
             }
         }
     }
 
-    private List<Node> GetCandidates(Graph graph, int maxCandidates, Node mutationNode)
+    private List<Node> GetCandidates(Graph graph)
     {
-        int graphNodeCount = graph.getNodeCount();
-
         ArrayList<Node> nodes = new ArrayList<Node>();
-
-        if(maxCandidates >= (graph.getNodeCount()- 1))
-        {
-            maxCandidates = graph.getNodeCount() - 1;
-        }
 
         for (Node node : graph)
         {
-            if(!node.getId().equals(mutationNode.getId()))
-            {
-                nodes.add(node);
-            }
+            nodes.add(node);
         }
 
-        ArrayList<Node> candidates =  pickNRandomCandidates(nodes,maxCandidates);
-
-        return candidates;
+        return nodes;
 
     }
 
-    public static List<Node> pickNRandom(List<Node> lst, int n)
-    {
-        List<Node> copy = new LinkedList<Node>(lst);
-        Collections.shuffle(copy);
-        return copy.subList(0, n);
-    }
+
 
     private String edgeId(String from, String to) {
 
         return from + to;
-    }
-
-    private ArrayList<Node> pickNRandomCandidates(ArrayList<Node> lst, int n)
-    {
-
-        Random rand = new Random();
-
-        int low = 0;
-        int high = lst.size();
-
-        ArrayList<Node> candidates = new ArrayList<Node>();
-
-        for (int i = 0; i < n; i++)
-        {
-            int randomIndex =  rand.nextInt(high-low) + low;
-            Node randomNode = lst.get(randomIndex);
-            lst.remove(randomIndex);
-            high = lst.size();
-            candidates.add(randomNode);
-        }
-
-        return candidates;
     }
 }

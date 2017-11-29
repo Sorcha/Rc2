@@ -1,11 +1,20 @@
 package Sequences;
 
 import Distance.HammingDistance;
+import Utils.StdRandom;
 
 import java.util.Random;
 
 public class Mutation
 {
+
+    public static int[] mutationsCount;
+
+    public static void InitCount(int size){
+
+        mutationsCount = new int[size];
+    }
+
     public static String dnaMutation(String sequence, int numberMutations)
     {
         HammingDistance hd = new HammingDistance();
@@ -73,24 +82,69 @@ public class Mutation
 
     public static String binaryMutation(String binaryString, double p)
     {
-        Random rand = new Random();
+       // Random rand = new Random();
+
+
 
         StringBuilder mutationBinarySequence = new StringBuilder();
 
         for (int i= 0; i < binaryString.length(); i++)
         {
-            double r = rand.nextDouble();
+           // double r = rand.nextDouble();
+
+            double r = StdRandom.uniform();
+            //System.out.println(r);
 
             char character = binaryString.charAt(i);
 
-            if(r>=p)
+            if(r<=p)
             {
+               // ++mutationsCount[i];
                 mutationBinarySequence.append(character == '1'?'0':'1');
             }else
                 {
                     mutationBinarySequence.append(character);
                 }
         }
+
+        return mutationBinarySequence.toString();
+
+    }
+
+    public static String binaryMutationWithPrefixNumberOfMutation(String binaryString, double p, int numberOfMutation)
+    {
+        Random rand = new Random();
+
+        StringBuilder mutationBinarySequence = new StringBuilder(binaryString.length());
+
+        int count = 0;
+
+        while (count < numberOfMutation)
+        {
+            for (int i= 0; i < binaryString.length(); i++)
+            {
+                double r = rand.nextDouble();
+
+                char character = binaryString.charAt(i);
+
+                if(r>=p && count < numberOfMutation)
+                {
+                    ++count;
+                    mutationBinarySequence.insert(i,character == '1'?'0':'1');
+                }else
+                {
+                    mutationBinarySequence.insert(i,character);
+                }
+            }
+
+            if(count >= numberOfMutation)
+            {
+                break;
+            }else
+                count = 0;
+        }
+
+
 
         return mutationBinarySequence.toString();
 

@@ -1,12 +1,16 @@
 import Distance.HammingDistance;
 import Sequences.Mutation;
 import org.graphstream.algorithm.Toolkit;
+import org.graphstream.algorithm.generator.BarabasiAlbertGenerator;
 import org.graphstream.algorithm.generator.Generator;
 import org.graphstream.algorithm.generator.WattsStrogatzGenerator;
 import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class Main {
 
@@ -14,7 +18,39 @@ public class Main {
 
     public static void main(String[] args)
     {
-        TestBinarySequences();
+        // TestGenerator();
+        //TestBinarySequencesWithoutTrials();
+        TestBinarySequencesUniformWithoutTrials();
+    }
+
+    private static void TestGenerator()
+    {
+        String sequence = Sequences.Generator.randomBinaryString(60);
+
+        Sequences.Mutation.InitCount(60);
+
+        for (int i=0; i<1000; i++)
+        {
+            Sequences.Mutation.binaryMutation(sequence,0.01);
+        }
+
+        for (int i = 0; i< Mutation.mutationsCount.length ; i++)
+        {
+            System.out.println(Mutation.mutationsCount[i]);
+        }
+
+    }
+
+
+
+
+    public static void printMap(Map mp) {
+        Iterator it = mp.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            System.out.println(pair.getKey() + " = " + pair.getValue());
+
+        }
     }
 
     private static void TestDnaGraph() {
@@ -46,23 +82,26 @@ public class Main {
 
     public static void TestBinarySequences()
     {
-        int hdThreshold = 20;
-        int sequenceLenght = 50;
-        int numberOfMutations = 20;
-        HammingDistance hd = new HammingDistance();
+        int sequenceLenght = 5000;
+
+        int hdThreshold = 100;
+
+        double mutationProbability = 0.01;
 
         String sequence = Sequences.Generator.randomBinaryString(sequenceLenght);
 
         System.out.println("Sequence: " + sequence);
 
-
         Graph graph = new SingleGraph("Binary Hamming Distance");
 
-        Generator gen = new Graphs.BinaryHammingGraph(sequence,hdThreshold,0.5,100);
+        Generator gen = new Graphs.BinaryHammingGraph(sequence,hdThreshold,mutationProbability,15);
 
         gen.addSink(graph);
         gen.begin();
-        while(gen.nextEvents()) {}
+        for(int i=0; i<100; i++)
+        {
+            gen.nextEvents();
+        }
         gen.end();
 
         graph.display(true);
@@ -75,5 +114,148 @@ public class Main {
             d = d.replace('.',',');
             System.out.println(d);
         }
+    }
+
+    public static void TestBinarySequences3()
+    {
+        int sequenceLenght = 100;
+
+        int hdThreshold = 90;
+
+        double mutationProbability = 0.01;
+
+        int trials = 2;
+
+        String sequence = Sequences.Generator.randomBinaryString(sequenceLenght);
+
+        System.out.println("Sequence: " + sequence);
+
+        Graph graph = new SingleGraph("Binary Hamming Distance");
+
+        Generator gen = new Graphs.BinaryHammingGraph(sequence,hdThreshold,mutationProbability, trials);
+
+        gen.addSink(graph);
+        gen.begin();
+        for(int i=0; i<1000; i++)
+        {
+            gen.nextEvents();
+        }
+        gen.end();
+
+        graph.display(true);
+
+        int [] degree = Toolkit.degreeDistribution(graph);
+
+        for (int i = 0; i<degree.length ; i++)
+        {
+            String d = Integer.toString(degree[i]);
+            d = d.replace('.',',');
+            System.out.println(d);
+        }
+    }
+
+    public static void TestBinarySequencesWithoutTrials()
+    {
+        int sequenceLenght = 100;
+
+        int hdThreshold = 60;
+
+        double mutationProbability = 0.5;
+
+        int trials = 2;
+
+        String sequence = Sequences.Generator.randomBinaryString(sequenceLenght);
+
+        System.out.println("Sequence: " + sequence);
+
+        Graph graph = new SingleGraph("Binary Hamming Distance");
+
+        Generator gen = new Graphs.BinaryHammingWithoutTrials(sequence,hdThreshold,mutationProbability);
+
+        gen.addSink(graph);
+        gen.begin();
+        for(int i=0; i<1000; i++)
+        {
+            gen.nextEvents();
+        }
+        gen.end();
+
+        graph.display(true);
+
+        int [] degree = Toolkit.degreeDistribution(graph);
+
+        for (int i = 0; i<degree.length ; i++)
+        {
+            String d = Integer.toString(degree[i]);
+            d = d.replace('.',',');
+            System.out.println(d);
+        }
+    }
+
+    public static void TestBinarySequencesUniformWithoutTrials()
+    {
+        int sequenceLenght = 1000;
+
+        int hdThreshold = 500;
+
+        double mutationProbability = 0.1;
+
+        int trials = 2;
+
+        String sequence = Sequences.Generator.randomBinaryString(sequenceLenght);
+
+        System.out.println("Sequence: " + sequence);
+
+        Graph graph = new SingleGraph("Binary Hamming Distance");
+
+        Generator gen = new Graphs.BinaryHammingUniformGraphWithoutTrials(sequence,hdThreshold,mutationProbability);
+
+        gen.addSink(graph);
+        gen.begin();
+        for(int i=0; i<1000; i++)
+        {
+            gen.nextEvents();
+        }
+        gen.end();
+
+        graph.display(true);
+
+        int [] degree = Toolkit.degreeDistribution(graph);
+
+        System.out.println("DistribuitionDegree");
+
+        for (int i = 0; i<degree.length ; i++)
+        {
+            String d = Integer.toString(degree[i]);
+            d = d.replace('.',',');
+            System.out.println(d);
+        }
+
+        /*degree = CumulativeDistribuitionDegree(degree);
+
+        System.out.println("CumulativeDistribuitionDegree");
+
+        for (int i = 0; i<degree.length ; i++)
+        {
+            String d = Integer.toString(degree[i]);
+            d = d.replace('.',',');
+            System.out.println(d);
+        }*/
+    }
+
+    private static int[] CumulativeDistribuitionDegree(int[] distribuition)
+    {
+        int [] cumulativeDistribuition = new int[distribuition.length];
+
+        cumulativeDistribuition[distribuition.length-1] = distribuition[distribuition.length-1];
+
+        for (int i = distribuition.length-2; i> 0; i--)
+        {
+            int aux = cumulativeDistribuition[i+1];
+            int ausOne = distribuition[i];
+            cumulativeDistribuition[i] = aux+ ausOne;
+        }
+
+        return cumulativeDistribuition;
     }
 }
