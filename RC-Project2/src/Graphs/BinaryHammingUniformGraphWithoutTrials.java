@@ -16,6 +16,8 @@ public class BinaryHammingUniformGraphWithoutTrials extends BaseGenerator
 
     private Random random;
 
+    private long count =0;
+
     private int hammingDistanceThreshold;
 
     private int currentIteration;
@@ -120,7 +122,8 @@ public class BinaryHammingUniformGraphWithoutTrials extends BaseGenerator
 
     private String edgeId(String from, String to) {
 
-        return from + to;
+        ++count;
+        return Long.toString(count);
     }
 
 

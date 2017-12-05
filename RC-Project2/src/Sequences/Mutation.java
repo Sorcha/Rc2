@@ -97,9 +97,9 @@ public class Mutation
 
             char character = binaryString.charAt(i);
 
-            if(r<=p)
+            if(r<p)
             {
-               // ++mutationsCount[i];
+                //++mutationsCount[i];
                 mutationBinarySequence.append(character == '1'?'0':'1');
             }else
                 {

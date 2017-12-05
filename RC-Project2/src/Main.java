@@ -18,9 +18,15 @@ public class Main {
 
     public static void main(String[] args)
     {
-        // TestGenerator();
+         //TestGenerator();
         //TestBinarySequencesWithoutTrials();
-        TestBinarySequencesUniformWithoutTrials();
+        //TestBinarySequencesUniformWithoutTrials();
+
+        TestBinarySequences3();
+        //TestBinarySequencesWithoutTrials();
+
+
+
     }
 
     private static void TestGenerator()
@@ -118,11 +124,11 @@ public class Main {
 
     public static void TestBinarySequences3()
     {
-        int sequenceLenght = 100;
+        int sequenceLenght = 50;
 
-        int hdThreshold = 90;
+        int hdThreshold = 3;
 
-        double mutationProbability = 0.01;
+        double mutationProbability = 0.005;
 
         int trials = 2;
 
@@ -136,7 +142,7 @@ public class Main {
 
         gen.addSink(graph);
         gen.begin();
-        for(int i=0; i<1000; i++)
+        for(int i=0; i<5000; i++)
         {
             gen.nextEvents();
         }
@@ -148,19 +154,22 @@ public class Main {
 
         for (int i = 0; i<degree.length ; i++)
         {
-            String d = Integer.toString(degree[i]);
-            d = d.replace('.',',');
-            System.out.println(d);
+
+
+                String d = Integer.toString(degree[i]);
+                d = d.replace('.', ',');
+                System.out.println(d);
+            
         }
     }
 
     public static void TestBinarySequencesWithoutTrials()
     {
-        int sequenceLenght = 100;
+        int sequenceLenght = 50;
 
-        int hdThreshold = 60;
+        int hdThreshold = 13;
 
-        double mutationProbability = 0.5;
+        double mutationProbability = 0.06;
 
         int trials = 2;
 
@@ -174,31 +183,47 @@ public class Main {
 
         gen.addSink(graph);
         gen.begin();
-        for(int i=0; i<1000; i++)
+        for(int i=0; i<6000; i++)
         {
             gen.nextEvents();
         }
         gen.end();
 
-        graph.display(true);
+       /* Iterator it = graph.getNodeIterator();
 
-        int [] degree = Toolkit.degreeDistribution(graph);
+         while(it.hasNext())
+         {
+             Node n = (Node)it.next();
+                                                                                
+             if(n.getDegree() == 0 || n.getDegree() == 1 || n.getDegree() < 0)
+                 graph.removeNode(n.getId());
+         }
+
+         graph.getNodeCount();         */
+        // graph.display(true);
+         int [] degree = Toolkit.degreeDistribution(graph);
 
         for (int i = 0; i<degree.length ; i++)
         {
+            if(degree[i]!=0) {
             String d = Integer.toString(degree[i]);
-            d = d.replace('.',',');
-            System.out.println(d);
+            d = d.replace('.', ',');
+            System.out.println(i + 1 + " " + d);
+        }
+            
+            
+            
+
         }
     }
 
     public static void TestBinarySequencesUniformWithoutTrials()
     {
-        int sequenceLenght = 1000;
+        int sequenceLenght = 50;
 
-        int hdThreshold = 500;
+        int hdThreshold = 20;
 
-        double mutationProbability = 0.1;
+        double mutationProbability = 0.9;
 
         int trials = 2;
 
@@ -212,13 +237,25 @@ public class Main {
 
         gen.addSink(graph);
         gen.begin();
-        for(int i=0; i<1000; i++)
+        for(int i=0; i<5000; i++)
         {
             gen.nextEvents();
         }
         gen.end();
 
-        graph.display(true);
+     
+
+        Iterator it = graph.getNodeIterator();
+
+        while(it.hasNext())
+        {
+            Node n = (Node)it.next();
+
+            if(n.getDegree() == 0 || n.getDegree() == 1 || n.getDegree() < 0)
+                graph.removeNode(n);
+        }
+
+        graph.display();
 
         int [] degree = Toolkit.degreeDistribution(graph);
 
@@ -226,21 +263,32 @@ public class Main {
 
         for (int i = 0; i<degree.length ; i++)
         {
-            String d = Integer.toString(degree[i]);
-            d = d.replace('.',',');
-            System.out.println(d);
+            if(degree[i]!=0)
+            {
+                String d = Integer.toString(degree[i]);
+                d = d.replace('.',',');
+                System.out.println(i+" "+d);
+
+            }
+
+
+
         }
 
-        /*degree = CumulativeDistribuitionDegree(degree);
 
-        System.out.println("CumulativeDistribuitionDegree");
 
-        for (int i = 0; i<degree.length ; i++)
-        {
-            String d = Integer.toString(degree[i]);
-            d = d.replace('.',',');
-            System.out.println(d);
-        }*/
+
+
+
+
+
+
+
+
+
+
+
+      
     }
 
     private static int[] CumulativeDistribuitionDegree(int[] distribuition)

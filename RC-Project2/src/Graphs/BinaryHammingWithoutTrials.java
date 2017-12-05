@@ -12,6 +12,8 @@ public class BinaryHammingWithoutTrials extends BaseGenerator
 {
     private String sequence;
 
+    private long edgeId= 0;
+
     private int hammingDistanceThreshold;
 
     private int currentIteration;
@@ -60,7 +62,7 @@ public class BinaryHammingWithoutTrials extends BaseGenerator
         if (node == null)
         {
 
-            System.out.println("Sequence: " + sequence + " Mutation: " + sequenceMutation + " Hamming Distance: " + hd.compare(sequence, sequenceMutation));
+            //System.out.println("Sequence: " + sequence + " Mutation: " + sequenceMutation + " Hamming Distance: " + hd.compare(sequence, sequenceMutation));
             this.addNode(sequenceMutation);
 
             node = this.internalGraph.getNode(sequenceMutation);
@@ -110,7 +112,8 @@ public class BinaryHammingWithoutTrials extends BaseGenerator
 
     private String edgeId(String from, String to) {
 
-        return from + to;
+        edgeId++;
+        return Long.toString(edgeId);
     }
 
 

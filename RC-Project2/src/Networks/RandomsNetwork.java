@@ -17,8 +17,8 @@ public class RandomsNetwork
     public static void main(String[] args)
     {
         ErdosNetwork();
-        SmallWorld();
-        BarabasiAlbertNetwork();
+        //SmallWorld();
+        //BarabasiAlbertNetwork();
     }
 
     private static void SmallWorld()
@@ -68,7 +68,7 @@ public class RandomsNetwork
 
     private static void ErdosNetwork()
     {
-        int N = 1000;
+        int N = 10000;
 
         double p = 0.1;
 
@@ -87,9 +87,13 @@ public class RandomsNetwork
 
         for (int i = 0; i<degree.length ; i++)
         {
-            String d = Integer.toString(degree[i]);
-            d = d.replace('.',',');
-            System.out.println(d);
+            if(degree[i]!=0)
+            {
+                String d = Integer.toString(degree[i]);
+                d = d.replace('.',',');
+                System.out.println(i+" "+d);
+            }
+
         }
     }
 
